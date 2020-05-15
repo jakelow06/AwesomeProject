@@ -23,8 +23,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "jake-project"
     },
-    "description": ""
+    "description": "",
+    "android": {
+      "package": "jake-project"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }

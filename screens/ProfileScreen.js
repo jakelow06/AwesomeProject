@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View, ScrollView, Text, TextInput, Image, StyleSheet, FlatList, Button } from "react-native";
 import { setLightEstimationEnabled } from 'expo/build/AR';
 
-import Fire from '../Fire';
+//import Fire from '../Fire';
 
 export default function ProfileScreen() {
     const [value, onChangeText] = React.useState('placeholder');
@@ -28,7 +28,6 @@ export default function ProfileScreen() {
              <View style={{flexDirection: 'column', justifyContent: 'center'}}>
               <Text>(Name here)</Text>
               <Text>(Location here)</Text>
-              <Text>Fire.shared.uid</Text>
              </View>
             </View>
             <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
