@@ -3,20 +3,56 @@ import * as React from 'react';
 import { View, ScrollView, Text, TextInput, Image, StyleSheet, FlatList, Button } from "react-native";
 import { setLightEstimationEnabled } from 'expo/build/AR';
 
-//import Fire from '../Fire';
+import * as firebase from 'firebase';
+import { UpdateEventType } from 'expo-updates';
 
 export default function ProfileScreen() {
     const [value, onChangeText] = React.useState('placeholder');
     const [itemList, updateItemList] = React.useState([]);
+    
+    var currentDbItems = firebase.database();
+    currentDbItems.ref('items').once('value').then((snapshot) => {
+        var itemsFromDb = [];
+        snapshot.forEach((item) => {
+            let dbItem = {
+                'key': item.key,
+                'value': item.val()
+            }
+            itemsFromDb.push(dbItem);
+        });
+        
+        updateItemList(itemsFromDb);
+    });
 
-    const addItemHandler = () => {
-        updateItemList(currentList => [...currentList, value]);
-        console.log(itemList)
+    const deleteItemValue = (value) => {
+        currentDbItems.ref('items/' + value['key']).remove((error) => {console.log(error);});
+    }
+
+    const writeItemValue = (value) => {
+        console.log("writeItemValue called");
+        var newItemKey = currentDbItems.ref().child('items').push().key;
+        var item = {};
+        item['/items/' + newItemKey] = value;
+        currentDbItems.ref().update(item);
+        return newItemKey;
     };
 
-    const itemButtonPressHandler = () => {
-        console.log("item button pressed!");
-    }
+
+    const addItemHandler = () => {
+        console.log("addItemHandler called");
+        //console.log("value: " + value);
+        var itemKey = writeItemValue(value);
+        var listItem = {
+            'key': itemKey,
+            'value': value
+        };
+        updateItemList(currentList => [...currentList, listItem]);
+        
+    };
+
+    const itemButtonPressHandler = (val) => {
+        console.log("item button pressed! " + val);
+    };
 
     return (
         <ScrollView>
@@ -39,10 +75,11 @@ export default function ProfileScreen() {
             </View>
             <View>
              {itemList.map((item) => 
-                <Button key={item}
-                    title={item}
+                <Button key={item['key']}
+                    title={item['value']}
                     style={styles.item}
-                    onPress={itemButtonPressHandler} />
+                    onPress={itemButtonPressHandler}
+                    onPress={() => deleteItemValue(item)} />
              )}
             </View>
         </ScrollView>
